@@ -102,7 +102,7 @@
     <!-- You should set jvmRoute to support load-balancing via AJP ie :
     <Engine name="Catalina" defaultHost="localhost" jvmRoute="jvm1">
     -->
-    <Engine name="Catalina" defaultHost="localhost">
+    <Engine name="Catalina" defaultHost="localhost"> <!-- IP时, 默认定位位置 localhost-->
 
       <!--For clustering, please take a look at documentation at:
           /docs/cluster-howto.html  (simple how to)
@@ -125,6 +125,9 @@
       <Host name="localhost"  appBase="webapps"
             unpackWARs="true" autoDeploy="true">
 
+	 <Context path="" docBase="ROOT"/> <!-- 如果不定义此行, 对 localhost访问将直接映射到 /data/webapps , docBase相对于appBase, 绝对时相当于httpd的Alaias -->
+    	<Context path="/bbs" docBase="/web/bss"
+      		reloadable="true" crossContext="true"/>	
         <!-- SingleSignOn valve, share authentication between web applications
              Documentation at: /docs/config/valve.html -->
         <!--
@@ -138,6 +141,26 @@
                prefix="localhost_access_log." suffix=".txt"
                pattern="%h %l %u %t &quot;%r&quot; %s %b" />
 
+      </Host>
+      <Host name="web1.magedu.com" appBase="/data/webapps" unpackWARs="true" autoDeploy="false">
+	    <!-- Tomcat Root Context -->
+	    <Context path="" docBase="MYROOT"/> <!-- /data/webapps/MYROOT才是 web1.magedu.com 访问的路径 path给定路径不能/结束--> 
+	    
+	    <!-- buzzin webapp -->       <!-- web1.magedu.com/bbs ==> /web/threads/bbs -->
+	    <Context path="/bbs"
+	      docBase="/web/threads/bbs"  
+	      reloadable="true">
+	    </Context> <!-- reloadable表示支持重新装载 -->
+	    
+	    <!-- chat server -->
+	      <Context path="/chat" docBase="/web/chat"/> 
+	      
+	    <!-- darian web -->
+	    <Context path="/darian" docBase="darian"/>    <!-- /data/webapps/darian 是 web1.magedu.com/darian 访问的路径-->
+	    <Alias>www.mageedu.com</Alias>
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="/data/logs"
+               prefix="web1_access_log." suffix=".txt"
+               pattern="%h %l %u %t &quot;%r&quot; %s %b" />
       </Host>
     </Engine>
   </Service>

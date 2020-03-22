@@ -6,7 +6,7 @@
   - tomcat-webapps        # web界面
   - tomcat-admin-webapps  # 管理界面
 
-- name: copy test 
+- name: copy test  dir to webapps
   copy: src=test dest=/var/lib/tomcat/webapps/
 
 - name: install conf tomcatuser
@@ -14,6 +14,18 @@
   notify: restart tomcat
   tags: tcusers
 
+- name: copy myroot content to MYROOT
+  copy: src=myroot/ dest=/data/webapps/MYROOT
+  
+- name: prepare virtualhost appBase or Context docBase  test page
+  copy: src=test/ dest={{ item }}
+  with_items: 
+  - /web/bss
+  - /data/webapps/darian
+  - /data/logs
+  - /web/threads/bbs
+  - /web/chat
+  when: servertype == 'web'
 - name: install conf web server.xml
   copy: src=server.xml dest=/etc/tomcat/
   notify: restart tomcat
