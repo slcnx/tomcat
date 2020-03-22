@@ -1,4 +1,4 @@
 - hosts: 192.168.73.135
   remote_user: root
   roles:
-  - tomcat
+  - roles/tomcat
