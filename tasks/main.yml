@@ -1,0 +1,41 @@
+---
+# tasks file for roles/tomcat
+- name: install tomcat
+  yum: name={{ item }} state=present
+  with_items:
+  - tomcat-webapps        # web界面
+  - tomcat-admin-webapps  # 管理界面
+
+- name: copy test 
+  copy: src=test dest=/var/lib/tomcat/webapps/
+
+- name: install conf tomcatuser
+  copy: src=tomcat-users.xml dest=/etc/tomcat/
+  notify: restart tomcat
+  tags: tcusers
+
+- name: install conf web server.xml
+  copy: src=server.xml dest=/etc/tomcat/
+  notify: restart tomcat
+  tags: tcserver
+  when: servertype == 'web'
+
+- name: install conf cluster server.xml
+  template: src=server-session-node.xml.j2 dest=/etc/tomcat/server.xml
+  notify: restart tomcat
+  tags: tcserver
+  when: servertype == 'cluster'
+
+- name: install conf cluster web.xml
+  copy: src=web.xml dest=/var/lib/tomcat/webapps/ROOT/WEB-INF/
+  notify: restart tomcat
+  tags: tcserver
+  when: servertype == 'cluster'
+
+- name: install conf cluster web.xml
+  copy: src=web.xml dest=/etc/tomcat
+  notify: restart tomcat
+  tags: tcserver
+  when: servertype == 'cluster'
+- name: start tomcat
+  service: name=tomcat state=started enabled=true
