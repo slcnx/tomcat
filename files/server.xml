@@ -142,7 +142,7 @@
                pattern="%h %l %u %t &quot;%r&quot; %s %b" />
 
       </Host>
-      <Host name="web1.magedu.com" appBase="/data/webapps" unpackWARs="true" autoDeploy="false">
+      <Host name="web1.magedu.com" appBase="/data/webapps" unpackWARs="true" autoDeploy="false"> # autoDeploy 为false相当于冷部署, 每次需要停止后提供网页，之后启动，才可以看到内容。否则在线部署访问不会成功。
 	    <!-- Tomcat Root Context -->
 	    <Context path="" docBase="MYROOT"/> <!-- /data/webapps/MYROOT才是 web1.magedu.com 访问的路径 path给定路径不能/结束--> 
 	    
